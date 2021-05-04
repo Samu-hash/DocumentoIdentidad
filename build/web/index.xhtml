@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Documentos -Gnrls</title>
+        <h:outputScript library="resources" name="convertDate.js" />
+        <style>
+            .ui-dialog .ui-widget-content{
+                border: 0px #fff;
+            }
+
+            .ui-panel .ui-widget-content{
+                border: 0px #fff;
+            }
+            .ui-widget-header .ui-inputfield, .ui-widget-content .ui-inputfield {
+                width: 100%;          
+            }
+            .ui-selectonemenu{
+                width: 94%;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter{
+                width: 85%
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon{
+                width: 7%;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+
+        <p:panel>
+            <h:form id="documentoForm">
+                <p:growl id="grow1" showDetail="true" life="4000" globalOnly="true" />
+                <p:panel style="text-align: center;">
+                    <p:outputLabel id="mensajetitulo"><h5  >${documentoIdentidadController.tituloMensajeVista}</h5></p:outputLabel>
+                    <p:commandButton  id="btnIngresarSistema" value="Ingresar" type="buttom" icon="pi pi-external-link" onclick="PF('dialogValidaSesion').show()" 
+                                      rendered="#{!documentoIdentidadController.esValidaSesion}" style="text-align: center;"/>
+                </p:panel>
+
+                <p:panel rendered="#{documentoIdentidadController.esValidaSesion}" style="border: 0px #fff !important; text-align: center;" >
+                    <p:panelGrid columns="1" columnClasses="ui-lg-12" style="width: 100%; border: 0px #fff !important">
+                        <p:commandButton value="Busqueda Documento" ajax="true" oncomplete="PF('dialogBusquedaDocumento').show();"
+                                         update="documentoForm" />
+                    </p:panelGrid>
+                </p:panel>
+
+                <p:panel id="panelValidoSesion" rendered="#{documentoIdentidadController.esValidaSesion}" 
+                         style="border: 0px #fff !important; text-align: center;" >
+                    <h1>Creación de Documento</h1>
+                    <p:accordionPanel widgetVar="accordionCreacionUsuarioDatosGenerales">
+                        <p:tab title="Datos generales">
+                            <p:panelGrid columns="4" style="width: 100%; border: 0px #fff !important; text-align: right;">
+
+                                <p:outputLabel for="txtDui" >DUI: </p:outputLabel>
+                                <p:inputMask id="txtDui"  mask="99999999-9" value="#{documentoIdentidadController.documentoEntitie.idDocumento}"/>
+
+                                <p:outputLabel for="fechaExpiracion" >Fecha Expiracion: </p:outputLabel>
+                                <p:datePicker id="fechaExpiracion"  style="width: 100%" pattern="dd/MM/yyyy"
+                                              value="#{documentoIdentidadController.documentoEntitie.fechaExpiracion}">
+                                </p:datePicker>
+
+
+                                <p:outputLabel for="txtNombresPersona" >Nombres: </p:outputLabel>
+                                <p:inputText id="txtNombresPersona" type="text"  
+                                             value="#{documentoIdentidadController.documentoEntitie.nombres}"/>
+
+                                <p:outputLabel for="txtApellidosPersona" >Apellidos: </p:outputLabel>
+                                <p:inputText id="txtApellidosPersona"  type="text" value="#{documentoIdentidadController.documentoEntitie.apellidos}"/>
+
+
+                                <p:outputLabel for="fechaNacimiento" >Fecha Nacimiento: </p:outputLabel>
+                                <p:datePicker id="fechaNacimiento"  value="#{documentoIdentidadController.documentoEntitie.fechaNacimiento}"
+                                              style="width: 100%" pattern="dd/MM/yyyy">
+                                </p:datePicker>
+
+                                <p:outputLabel for="txtConocidoPor" >Es conocido por: </p:outputLabel>
+                                <p:inputText id="txtConocidoPor" type="text"  value="#{documentoIdentidadController.documentoEntitie.conocidoPor}" />
+
+                                <p:outputLabel for="lblDeptoNacimiento" >Departamento Nacimiento: </p:outputLabel>
+                                <p:selectOneMenu id="lblDeptoNacimiento" effect="fade"  filter="true" 
+                                                 value="#{documentoIdentidadController.busquedaDepto}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{documentoIdentidadController.listDeptoEntitie}" var="deptoNac"
+                                                   itemLabel="#{deptoNac.nombreDepartamento}" itemValue="#{deptoNac.idDepartamento}"/>
+
+                                    <p:ajax event="change" listener="#{documentoIdentidadController.listMuniEntitieXdepto}"
+                                            update="lblDeptoNacimiento"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="lblMuniNacimiento" >Municipio Nacimiento: </p:outputLabel>
+                                <p:selectOneMenu id="lblMuniNacimiento" effect="fade" autoWidth="false" filter="true" 
+                                                 value="#{documentoIdentidadController.documentoEntitie.lugarNacimientoEntitie.idMunicipio}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}"/>
+                                    <f:selectItems value="#{documentoIdentidadController.listMuniEntitie}" var="m"
+                                                   itemLabel="#{m.nombreMunicipio}" itemValue="#{m.idMunicipio}"/>
+                                </p:selectOneMenu>
+
+
+                                <p:outputLabel for="rbdGenero" >Genero: </p:outputLabel>
+                                <p:selectOneRadio id="rbdGenero" value="#{documentoIdentidadController.documentoEntitie.genero}"  >
+                                    <f:selectItem itemLabel="Maculino" itemValue="M" />
+                                    <f:selectItem itemLabel="Femenino" itemValue="F"/>
+                                </p:selectOneRadio>
+
+                                <p:outputLabel for="lblProfesion">Profesión/Oficio: </p:outputLabel>
+                                <p:selectOneMenu id="lblProfesion" effect="fade" autoWidth="false" filter="true"
+                                                 value="#{documentoIdentidadController.documentoEntitie.profesionEntitie.idProfesiones}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{documentoIdentidadController.listProfesionEntitie}" var="prof"
+                                                   itemLabel="#{prof.nombreProfesion}" itemValue="#{prof.idProfesiones}"/>
+                                </p:selectOneMenu>
+
+
+                                <p:outputLabel for="rbdGenero">Cargar Foto: </p:outputLabel>
+                                <p:fileUpload value="#{documentoIdentidadController.uploadFile}" mode="simple" skinSimple="true" 
+
+                                              sizeLimit="102400" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                              invalidSizeMessage="El tamaño máximo de archivo permitido es 100 KB"
+                                              invalidFileMessage="solo gif | jpg | jpeg | png está permitido"
+                                              style="width: 50%"/>
+
+                                <p:outputLabel for="lblMuniExp" >Municipio Expedición: </p:outputLabel>
+                                <p:selectOneMenu id="lblMuniExp" effect="fade"  filter="true" 
+                                                 value="#{documentoIdentidadController.documentoEntitie.lugarExpedicionEntities.idMunicipio}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{documentoIdentidadController.listMuniEntitie}" var="muniExp"
+                                                   itemLabel="#{muniExp.nombreMunicipio}" itemValue="#{muniExp.idMunicipio}"/>
+
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Datos secundarios">
+                            <p:panelGrid columns="4" style="width: 100%; border: 0px #fff !important">
+
+                                <p:outputLabel for="lblDeptoResidencia">Departamento Residencia: </p:outputLabel>
+                                <p:selectOneMenu id="lblDeptoResidencia" effect="fade"  value="#{documentoIdentidadController.busquedaDepto}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{documentoIdentidadController.listDeptoEntitie}" var="deptoRes"
+                                                   itemLabel="#{deptoRes.nombreDepartamento}" itemValue="#{deptoRes.idDepartamento}"/>
+
+                                    <p:ajax event="change" listener="#{documentoIdentidadController.listMuniEntitieXdepto}"
+                                            process="@this" update="@this lblMuniNacimiento"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="lblMuniResidencia">Municipio Residencia: </p:outputLabel>
+                                <p:selectOneMenu id="lblMuniResidencia" effect="fade" value="#{documentoIdentidadController.documentoEntitie.residenciaEntitie.idMunicipio}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{documentoIdentidadController.listMuniEntitie}" var="muniRes"
+                                                   itemLabel="#{muniRes.nombreMunicipio}" itemValue="#{muniRes.idMunicipio}"/>
+                                </p:selectOneMenu>
+
+
+                                <p:outputLabel for="txtLugarResidencia">Lugar Residencia </p:outputLabel>
+                                <p:inputText id="txtLugarResidencia" type="text" value="#{documentoIdentidadController.documentoEntitie.residencia}" />
+
+                                <p:outputLabel for="txtCodigoZona">Código de zona: </p:outputLabel>
+                                <p:inputText id="txtCodigoZona" type="text" value="#{documentoIdentidadController.documentoEntitie.codidoZona}" />
+
+
+                                <p:outputLabel for="txtNombreMadre">Nombre completo de Madre: </p:outputLabel>
+                                <p:inputText id="txtNombreMadre" type="text" value="#{documentoIdentidadController.documentoEntitie.nombreMadre}" />
+
+                                <p:outputLabel for="txtNombrePadre">Nombre completo de Padre </p:outputLabel>
+                                <p:inputText id="txtNombrePadre" type="text" value="#{documentoIdentidadController.documentoEntitie.nombrePadre}" />
+
+
+                                <p:outputLabel for="lblEstadoFamiliar">Estado Familiar: </p:outputLabel>
+                                <p:selectOneMenu id="lblEstadoFamiliar" effect="fade" value="#{documentoIdentidadController.documentoEntitie.estadoFamiliarEntitie.idEstadoFamiliar}" >
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{documentoIdentidadController.listEstadoFamEntite}" var="fam"
+                                                   itemLabel="#{fam.nombreEstadoFamiliar}" itemValue="#{fam.idEstadoFamiliar}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="txtConyuge">Cónyuge: </p:outputLabel>
+                                <p:inputText id="txtConyuge" type="text" value="#{documentoIdentidadController.documentoEntitie.conyuge}"  />
+
+
+                                <p:outputLabel for="lblTipoSangre">Tipo Sangre: </p:outputLabel>
+                                <p:selectOneMenu id="lblTipoSangre" effect="fade" value="#{documentoIdentidadController.documentoEntitie.tipoSangreEntitie.idTipoSangre}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{documentoIdentidadController.listTipoSagreEntitie}" var="ts"
+                                                   itemLabel="#{ts.tipoSangre}" itemValue="#{ts.idTipoSangre}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="txtNit">NIT: </p:outputLabel>
+                                <p:inputText id="txtNit" type="text" value="#{documentoIdentidadController.documentoEntitie.nit}" />
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>
+                    <br/>
+                    <p:panelGrid columns="2"  style="width: 100%; border: 0px #fff !important">
+                        <p:commandButton id="guardarDocumento" value="Guardar" ajax="true" update="documentoForm"  
+                                         disabled="#{documentoIdentidadController.edicionUsuario}"
+                                         actionListener="#{documentoIdentidadController.guardarDocumento}" />
+
+                        <p:commandButton id="actualizarDocumento" value="Actualizar" disabled="#{!documentoIdentidadController.edicionUsuario}" 
+                                         ajax="true" update="documentoForm" actionListener="#{documentoIdentidadController.actualizarDocumento()}"/>
+                    </p:panelGrid>
+
+                </p:panel>
+
+                <p:messages id="mensaje" showDetail="true" globalOnly="true" closable="true" />
+
+
+                <p:dialog header="Ingrese sus credenciales" widgetVar="dialogValidaSesion" modal="true" showEffect="fade" 
+                          hideEffect="fade" closable="false" style="text-align: center;">
+                    <p:panelGrid columns="2" styleClass="ui-panelgrid ui-responsive" >
+                        <p:outputLabel for="txtNombreUsuario" styleClass="p-d-block" >Ingrese usuario</p:outputLabel>
+                        <p:inputText id="txtNombreUsuario" type="text"  value="#{documentoIdentidadController.usuarioSession}" />
+                        <br/>
+                        <p:outputLabel />
+                        <p:outputLabel for="txtClaveUsuario" styleClass="p-d-block" >Ingrese clave</p:outputLabel>
+                        <p:password  id="txtClaveUsuario" value="#{documentoIdentidadController.claveSession}" redisplay="true"/>
+
+                        <p:commandButton value="Cerrar" oncomplete="PF('dialogValidaSesion').hide();"/>
+                        <p:commandButton value="Ingresar" ajax="true" action="#{documentoIdentidadController.validaSesion()}" update="mensaje grow1" />
+                    </p:panelGrid>
+                </p:dialog>
+
+                <p:dialog header="Busqueda de documentos" widgetVar="dialogBusquedaDocumento" modal="true" showEffect="fade" 
+                          hideEffect="fade" closable="false" style="text-align: center;">
+                    <p:panelGrid columns="2" styleClass="ui-panelgrid ui-responsive" >
+                        <p:outputLabel for="rbdTipoBusqueda" >Tipo de busqueda: </p:outputLabel>
+                        <p:selectOneRadio id="rbdTipoBusqueda" value="#{documentoIdentidadController.tipodBusqueda}"  >
+                            <f:selectItem itemValue="T" itemLabel="Buscat todo" />
+                            <f:selectItem itemValue="N" itemLabel="Buscar por nombre"/>
+                            <f:selectItem itemValue="D" itemLabel="Buscar por documento"/>
+                            <p:ajax event="change" listener="#{documentoIdentidadController.validarInabilitacionCampo(documentoIdentidadController.tipodBusqueda)}"
+                                    update="txtTipoBusqueda"/>
+                        </p:selectOneRadio>
+                        <br/>
+                    </p:panelGrid>
+                    <p:panelGrid columns="3" styleClass="ui-panelgrid ui-responsive" >
+                        <p:outputLabel for="txtTipoBusqueda" >Texto a buscar: </p:outputLabel>
+                        <p:inputText id="txtTipoBusqueda" type="text"  value="#{documentoIdentidadController.textoBusqueda}" 
+                                     disabled="#{documentoIdentidadController.inabilitarCampoTexto}" 
+                                     readonly="#{documentoIdentidadController.inabilitarCampoTexto}"/>
+                        <p:commandButton value="Buscar" actionListener="#{documentoIdentidadController.buscarDocumento}" ajax="true" update="tablaDocumentos" />
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="ui-panelgrid ui-responsive" >
+                        <p:dataTable id="tablaDocumentos" var="ldoc" value="#{documentoIdentidadController.listDocumentoEntitie}" rows="10"
+                                     paginator="true" emptyMessage="No se encontraron resultados..."
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                     rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+
+                            <p:column headerText="Documento">
+                                <h:outputText value="#{ldoc.idDocumento}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre completo">
+                                <h:outputText value="#{ldoc.nombres} #{ldoc.apellidos}" />
+                            </p:column>
+
+                            <p:column headerText="Dirección">
+                                <h:outputText value="#{ldoc.residencia}"  />
+                            </p:column>
+
+                            <p:column headerText="Nombre Madre">
+                                <h:outputText value="#{ldoc.nombreMadre}" />
+                            </p:column>
+
+                            <p:column headerText="genero">
+                                <h:outputText value="#{ldoc.genero eq 'M' ? 'Masculino' : 'Femenino'}" />
+                            </p:column>
+
+                            <p:column >
+                                <p:commandButton value="Remover Documento" ajax="true" update="documentoForm"
+                                                 oncomplete="#{documentoIdentidadController.buscarDocumento()}"
+                                                 actionListener="#{documentoIdentidadController.removerDocumento(ldoc.idDocumento)}"/>
+                            </p:column>
+
+                            <p:column >
+                                <p:commandButton value="Selecccionar" oncomplete="PF('dialogBusquedaDocumento').hide();"  
+                                                 ajax="true"
+                                                 actionListener="#{documentoIdentidadController.seleccionarDocumento(ldoc)}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:commandButton value="Cerrar" oncomplete="PF('dialogBusquedaDocumento').hide();"/>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:panel>
+
+    </h:body>
+
+</html>
