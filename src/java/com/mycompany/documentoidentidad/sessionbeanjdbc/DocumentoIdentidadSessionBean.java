@@ -6,6 +6,7 @@
 package com.mycompany.documentoidentidad.sessionbeanjdbc;
 
 import com.mycompany.documentoidentidad.entities.DocumentoIdentidadEntities;
+import com.mycompany.documentoidentidad.entities.DocumentoIdentidadEntitiesReport;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
@@ -152,7 +153,7 @@ public class DocumentoIdentidadSessionBean {
                     + "LEFT JOIN cat_departamentos deptoExp ON(muniExp.id_municipio = deptoExp.id_departamento) "
                     + "LEFT JOIN cat_municipios muniRes ON(doc.id_residencia = muniRes.id_municipio) "
                     + "LEFT JOIN cat_departamentos deptoRes ON(muniRes.id_municipio = deptoRes.id_departamento) "
-                    + "WHERE doc.estado ='A' and doc.id_documento like'%" + textoBusqueda + "%'";
+                    + "WHERE doc.estado ='A' and doc.id_documento like'%" + textoBusqueda + "%' ";
             return this.jdbctemplate.query(sql, new DocumentoIdentidadEntities());
         } catch (DataAccessException e) {
             e.printStackTrace();
@@ -175,7 +176,7 @@ public class DocumentoIdentidadSessionBean {
                     + ") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             return this.jdbctemplate.update(sql, new Object[]{
                 doc.getIdDocumento(), doc.getEstadoFamiliarEntitie().getIdEstadoFamiliar(), doc.getTipoSangreEntitie().getIdTipoSangre(),
-                doc.getProfesionEntitie().getIdProfesiones(), doc.getMunicipiosEntities().getIdMunicipio(),
+                doc.getProfesionEntitie().getIdProfesiones(), doc.getLugarNacimientoEntitie().getIdMunicipio(),
                 doc.getNombres(), doc.getApellidos(), doc.getConocidoPor(), doc.getGenero(), doc.getFechaNacimiento(), doc.getLugarNacimientoEntitie().getIdMunicipio(),
                 DocumentoIdentidadSessionBean.convertir(doc.getFechaExpedicion()), doc.getLugarExpedicionEntities().getIdMunicipio(), DocumentoIdentidadSessionBean.convertir(doc.getFechaExpiracion()),
                 doc.getResidencia(), doc.getResidenciaEntitie().getIdMunicipio(), doc.getNombreMadre(), doc.getNombrePadre(), doc.getConyuge(), doc.getTramite(), doc.getNit(), doc.getCodidoZona(),
@@ -197,8 +198,8 @@ public class DocumentoIdentidadSessionBean {
                     + "url_foto = ? where id_documento = ? ";
             return this.jdbctemplate.update(sql, new Object[]{
                 doc.getEstadoFamiliarEntitie().getIdEstadoFamiliar(), doc.getProfesionEntitie().getIdProfesiones(), doc.getMunicipiosEntities().getIdMunicipio(),
-                doc.getConocidoPor(), doc.getFechaExpedicion(), doc.getLugarExpedicionEntities().getIdMunicipio(), 
-                doc.getFechaExpiracion(), doc.getResidencia(), doc.getResidenciaEntitie().getIdMunicipio(), 
+                doc.getConocidoPor(), doc.getFechaExpedicion(), doc.getLugarExpedicionEntities().getIdMunicipio(),
+                doc.getFechaExpiracion(), doc.getResidencia(), doc.getResidenciaEntitie().getIdMunicipio(),
                 doc.getNombreMadre(), doc.getNombrePadre(), doc.getConyuge(), doc.getNit(), doc.getCodidoZona(),
                 doc.getUrlFoto(), doc.getIdDocumento()
             }) > 0;
@@ -223,4 +224,46 @@ public class DocumentoIdentidadSessionBean {
         }
     }
 
+    public List<DocumentoIdentidadEntitiesReport> findAllDocumentoReport(String textoBusqueda) {
+        try {
+            String sql = "SELECT doc.*, "
+                    + "fam.id_estado_familiar, fam.nombre_estado_familiar, fam.estado, "
+                    + "ts.id_tipo_sangre, ts.tipo_sangre, "
+                    + "pro.id_profesion, pro.nombre_profesion, pro.estado, "
+                    + "muni.id_municipio, depto.id_departamento, depto.nombre_departamento, muni.nombre_municipio, "
+                    + "deptoNac.id_departamento as id_depto_lugar_nac, deptoNac.nombre_departamento as nombre_departamento_lugar_nac,"
+                    + "muniNac.nombre_municipio as nombre_municipio_lugar_nac,"
+                    + "deptoExp.id_departamento AS id_depto_fec_exp, deptoExp.nombre_departamento AS nombre_departamento_fec_exp,"
+                    + "muniExp.nombre_municipio AS nombre_municipio_fec_exp,"
+                    + "deptoRes.id_departamento AS id_depto_residencia, deptoRes.nombre_departamento AS nombre_departamento_residencia, "
+                    + "muniRes.nombre_municipio AS nombre_municipio_residencia "
+                    + "FROM documento_identidad doc "
+                    + "INNER JOIN cat_estado_familiar fam ON(doc.id_estado_familiar =  fam.id_estado_familiar) "
+                    + "INNER JOIN cat_tipo_sangre ts ON(doc.id_tipo_sangre = ts.id_tipo_sangre) "
+                    + "INNER JOIN cat_profesiones pro ON(doc.id_profesion =  pro.id_profesion) "
+                    + "LEFT JOIN cat_municipios muni ON(doc.id_municipio = muni.id_municipio) "
+                    + "LEFT JOIN cat_departamentos depto ON(muni.id_municipio = depto.id_departamento) "
+                    + "LEFT JOIN cat_municipios muniNac ON(doc.id_lugar_nacimiento = muniNac.id_municipio) "
+                    + "LEFT JOIN cat_departamentos deptoNac ON(muniNac.id_municipio = deptoNac.id_departamento) "
+                    + "LEFT JOIN cat_municipios muniExp ON(doc.id_lugar_expedicion = muniExp.id_municipio)"
+                    + "LEFT JOIN cat_departamentos deptoExp ON(muniExp.id_municipio = deptoExp.id_departamento) "
+                    + "LEFT JOIN cat_municipios muniRes ON(doc.id_residencia = muniRes.id_municipio) "
+                    + "LEFT JOIN cat_departamentos deptoRes ON(muniRes.id_municipio = deptoRes.id_departamento) "
+                    + "WHERE doc.estado ='A' and doc.id_documento like'%" + textoBusqueda + "%' ";
+            return this.jdbctemplate.query(sql, new DocumentoIdentidadEntitiesReport());
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public int existenciaDocumento(String pk) {
+        try {
+            String sql = "SELECT COUNT(*) FROM documento_identidad WHERE id_documento = '" + pk + "'";
+            return this.jdbctemplate.queryForInt(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }

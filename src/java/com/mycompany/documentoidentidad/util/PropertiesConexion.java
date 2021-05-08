@@ -5,6 +5,7 @@
  */
 package com.mycompany.documentoidentidad.util;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,10 @@ public class PropertiesConexion {
             throw new RuntimeException("Error en el driver");
         }
         ds.setUrl(env.getRequiredProperty("URL"));
+        System.out.println(env.getRequiredProperty("URL"));
         ds.setUsername(env.getRequiredProperty("USER"));
         ds.setPassword(env.getRequiredProperty("PASSWORD"));
         return ds;
     }
-
+    
 }

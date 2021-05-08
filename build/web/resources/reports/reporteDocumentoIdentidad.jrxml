@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteDocumentoIdentidad" language="groovy" pageWidth="495" pageHeight="500" columnWidth="455" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bf62fdc2-47d6-4457-bd49-bf4585764623">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="idDocumento" class="java.lang.String"/>
+	<field name="estadoFamiliarEntitie" class="java.lang.String"/>
+	<field name="tipoSangreEntitie" class="java.lang.String"/>
+	<field name="profesionEntitie" class="java.lang.String"/>
+	<field name="departamentoEntities" class="java.lang.String"/>
+	<field name="municipiosEntities" class="java.lang.String"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="conocidoPor" class="java.lang.String"/>
+	<field name="genero" class="java.lang.String"/>
+	<field name="fechaNacimiento" class="java.lang.String"/>
+	<field name="lugarNacimientoEntitieMuni" class="java.lang.String"/>
+	<field name="lugarNacimientoEntitieDepto" class="java.lang.String"/>
+	<field name="fechaExpedicion" class="java.lang.String"/>
+	<field name="lugarExpedicionEntitiesMuni" class="java.lang.String"/>
+	<field name="lugarExpedicionEntitiesDepto" class="java.lang.String"/>
+	<field name="fechaExpiracion" class="java.lang.String"/>
+	<field name="residencia" class="java.lang.String"/>
+	<field name="residenciaEntitieMuni" class="java.lang.String"/>
+	<field name="residenciaEntitieDepto" class="java.lang.String"/>
+	<field name="nombreMadre" class="java.lang.String"/>
+	<field name="nombrePadre" class="java.lang.String"/>
+	<field name="conyuge" class="java.lang.String"/>
+	<field name="tramite" class="java.lang.String"/>
+	<field name="nit" class="java.lang.String"/>
+	<field name="codidoZona" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="foto" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="155" height="45" uuid="841a5f6d-9129-43fe-bdb7-91e2aee5afc5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Documento:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="155" y="0" width="213" height="45" uuid="e51a4d4b-626a-4a81-9023-fd6c1cb52e9f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{idDocumento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="359" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="1" width="137" height="20" uuid="0efcef02-eadc-43d2-b6e9-f62b0fc387bc"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Nombre completo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="32" width="137" height="20" uuid="38a4060b-4d89-4489-9a10-9a471b54eaca"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Residencia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="64" width="137" height="20" uuid="6908debb-5266-4b58-9a0c-779a82b473a3"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Lugar y Fecha Nacimiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="96" width="137" height="20" uuid="80c9798a-d7af-4364-844d-0c07d4c82334"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Genero:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="96" width="100" height="20" uuid="1a4a4379-7c9b-48d0-8005-6350ef5122d4"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Estado Familiar:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="131" width="137" height="20" uuid="b9e8f1a9-5494-4f69-8181-3e9587043553"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Nombre de la Madre:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="166" width="137" height="20" uuid="3acd65bd-ebe9-4bc2-828a-046a94ebc3c9"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Nombre del Padre:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="202" width="137" height="20" uuid="af4100a1-82e9-49ea-8b82-9f128b6862ef"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Conyuge:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="239" width="137" height="20" uuid="afb5cb85-548a-41b6-b06d-5d6928869f5b"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Tipo Sangre:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="239" width="100" height="20" uuid="079e49e1-fa84-4350-9e8b-3710033e3b78"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Profesión:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="273" width="137" height="20" uuid="0d926105-dbc6-4472-b1a4-34495e2d1c65"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Fecha y lugar de expedición:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="337" width="137" height="20" uuid="6ed32e67-bb1d-40cd-8cba-d80c6115fec2"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Fecha de expiración:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="139" y="0" width="229" height="20" uuid="2603a082-d695-4900-91a3-88480dc5e89e"/>
+				<textFieldExpression><![CDATA[$F{nombres}.concat(" ").concat($F{apellidos})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="32" width="229" height="20" uuid="d7274bbd-a738-4cbe-b0b2-76a6e8ff9f2b"/>
+				<textFieldExpression><![CDATA[$F{residencia}
+.concat(' ')
+.concat($F{residenciaEntitieDepto})
+.concat(' ')
+.concat($F{residenciaEntitieMuni})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="64" width="229" height="20" uuid="fba0ced2-cd86-4685-9be6-536acda73bc9"/>
+				<textFieldExpression><![CDATA[$F{fechaNacimiento}.toString().concat(" ")
+.concat($F{lugarNacimientoEntitieDepto})
+.concat(", ")
+.concat($F{lugarNacimientoEntitieMuni})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="96" width="94" height="20" uuid="30b34afd-58c0-445f-a706-c30c63394671"/>
+				<textFieldExpression><![CDATA[$F{genero} != null ?
+    $F{genero}.equals("M") ? "Masculino" : "Femenino"
+: ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="343" y="96" width="109" height="20" uuid="d1ecbf40-569e-438b-b224-7ca197fa216b"/>
+				<textFieldExpression><![CDATA[$F{estadoFamiliarEntitie}!= null ? $F{estadoFamiliarEntitie} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="131" width="313" height="20" uuid="3f5454e3-8567-4720-bc9b-639a09315000"/>
+				<textFieldExpression><![CDATA[$F{nombreMadre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="166" width="313" height="20" uuid="d1bc68a2-8585-4999-8d4f-3afba1fb79b7"/>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="202" width="313" height="20" uuid="2de72c8e-d2a8-4962-9f58-717b24cb88ce"/>
+				<textFieldExpression><![CDATA[$F{conyuge}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="239" width="94" height="20" uuid="37f91cd3-7622-46ee-a308-2601b2814560"/>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="343" y="239" width="109" height="20" uuid="089f2c2d-c806-4221-b444-917f634d3d03"/>
+				<textFieldExpression><![CDATA[$F{profesionEntitie}!=null ? $F{profesionEntitie}: ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="273" width="313" height="20" uuid="fb27c52a-72a1-4af0-9312-7e244be98c99"/>
+				<textFieldExpression><![CDATA[$F{fechaExpedicion}.toString().concat(" ")
+.concat($F{lugarExpedicionEntitiesDepto})
+.concat(", ")
+.concat($F{lugarExpedicionEntitiesMuni})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="337" width="301" height="20" uuid="73b3bdbe-8e29-4a5f-9010-9b6b1246f9cd"/>
+				<textFieldExpression><![CDATA[$F{fechaExpiracion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="303" width="137" height="20" uuid="d86fff5d-8ce7-4538-a308-1f8001577bac"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[NIT:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="139" y="303" width="94" height="20" uuid="d556d758-ceea-4b2a-a647-21ae90ca09cb"/>
+				<textFieldExpression><![CDATA[$F{nit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="352" y="303" width="100" height="20" uuid="ea4f7867-c6fa-4486-97be-44bcf9652412"/>
+				<textFieldExpression><![CDATA[$F{tramite}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="239" y="303" width="104" height="20" uuid="b78fb88b-f625-4edf-9467-72492a3c6212"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Trámite:]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

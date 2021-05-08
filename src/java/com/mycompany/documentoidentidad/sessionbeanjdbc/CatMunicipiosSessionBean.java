@@ -44,13 +44,13 @@ public class CatMunicipiosSessionBean {
         }
     }
 
-    public List<CatMunicipiosEntities> findDepto(String fk) {
+    public List<CatMunicipiosEntities> findDepto(CatDepartamentosEntities fk) {
         try {
             String sql = "select muni.id_municipio, muni.nombre_municipio, depto.id_departamento, depto.nombre_departamento "
                     + "from cat_municipios muni "
                     + "inner join cat_departamentos depto on(muni.id_departamento = depto.id_departamento) "
                     + "where depto.id_departamento = ?";
-            return this.jdbcTemplate.query(sql, new Object[]{fk}, new CatMunicipiosEntities());
+            return this.jdbcTemplate.query(sql, new Object[]{fk.getIdDepartamento()}, new CatMunicipiosEntities());
         } catch (DataAccessException e) {
             e.printStackTrace();
             return new ArrayList<>();

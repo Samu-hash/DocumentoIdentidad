@@ -32,28 +32,39 @@
             }
         </style>
     </h:head>
+    <f:metadata>
+        <f:event listener="#{documentoIdentidadController.validarSesionActiva()}" type="preRenderView"/>
+    </f:metadata>
 
     <h:body>
 
         <p:panel>
-            <h:form id="documentoForm">
+            <h:form id="documentoForm" enctype="multipart/form-data">
+
+                <p:blockUI id="block" widgetVar="block" block="documentoForm">
+                    Procesando...<br />
+                    <p:graphicImage name="imgDocu/ajax-loader.gif" width="25%"/>
+                </p:blockUI>
                 <p:growl id="grow1" showDetail="true" life="4000" globalOnly="true" />
                 <p:panel style="text-align: center;">
                     <p:outputLabel id="mensajetitulo"><h5  >${documentoIdentidadController.tituloMensajeVista}</h5></p:outputLabel>
-                    <p:commandButton  id="btnIngresarSistema" value="Ingresar" type="buttom" icon="pi pi-external-link" onclick="PF('dialogValidaSesion').show()" 
+                    <p:commandButton  id="btnIngresarSistema" value="Ingresar" type="buttom"
+                                      onstart="PF('block').show();" oncomplete="PF('block').hide();" 
+                                      onclick="PF('dialogValidaSesion').show();" 
                                       rendered="#{!documentoIdentidadController.esValidaSesion}" style="text-align: center;"/>
                 </p:panel>
 
                 <p:panel rendered="#{documentoIdentidadController.esValidaSesion}" style="border: 0px #fff !important; text-align: center;" >
                     <p:panelGrid columns="1" columnClasses="ui-lg-12" style="width: 100%; border: 0px #fff !important">
-                        <p:commandButton value="Busqueda Documento" ajax="true" oncomplete="PF('dialogBusquedaDocumento').show();"
-                                         update="documentoForm" />
+                        <p:commandButton value="Busqueda Documento" ajax="true" 
+                                         oncomplete="PF('dialogBusquedaDocumento').show(); PF('block').hide();"
+                                         update="documentoForm" onstart="PF('block').show();" />
                     </p:panelGrid>
                 </p:panel>
 
                 <p:panel id="panelValidoSesion" rendered="#{documentoIdentidadController.esValidaSesion}" 
                          style="border: 0px #fff !important; text-align: center;" >
-                    <h1>Creación de Documento</h1>
+                    <h1>Gestión de Documento</h1>
                     <p:accordionPanel widgetVar="accordionCreacionUsuarioDatosGenerales">
                         <p:tab title="Datos generales">
                             <p:panelGrid columns="4" style="width: 100%; border: 0px #fff !important; text-align: right;">
@@ -77,7 +88,7 @@
 
                                 <p:outputLabel for="fechaNacimiento" >Fecha Nacimiento: </p:outputLabel>
                                 <p:datePicker id="fechaNacimiento"  value="#{documentoIdentidadController.documentoEntitie.fechaNacimiento}"
-                                              style="width: 100%" pattern="dd/MM/yyyy">
+                                              maxdate="#{documentoIdentidadController.fechaMinima}" style="width: 100%" pattern="dd/MM/yyyy">
                                 </p:datePicker>
 
                                 <p:outputLabel for="txtConocidoPor" >Es conocido por: </p:outputLabel>
@@ -85,20 +96,20 @@
 
                                 <p:outputLabel for="lblDeptoNacimiento" >Departamento Nacimiento: </p:outputLabel>
                                 <p:selectOneMenu id="lblDeptoNacimiento" effect="fade"  filter="true" 
-                                                 value="#{documentoIdentidadController.busquedaDepto}">
+                                                 value="#{documentoIdentidadController.deptoNacEntitie.idDepartamento}">
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
-                                    <f:selectItems value="#{documentoIdentidadController.listDeptoEntitie}" var="deptoNac"
+                                    <f:selectItems value="#{documentoIdentidadController.listDeptoNacEntitie}" var="deptoNac"
                                                    itemLabel="#{deptoNac.nombreDepartamento}" itemValue="#{deptoNac.idDepartamento}"/>
 
-                                    <p:ajax event="change" listener="#{documentoIdentidadController.listMuniEntitieXdepto}"
-                                            update="lblDeptoNacimiento"/>
+                                    <p:ajax event="change" listener="#{documentoIdentidadController.getListMuniNacDepto}"
+                                            update="lblMuniNacimiento"/>
                                 </p:selectOneMenu>
 
                                 <p:outputLabel for="lblMuniNacimiento" >Municipio Nacimiento: </p:outputLabel>
                                 <p:selectOneMenu id="lblMuniNacimiento" effect="fade" autoWidth="false" filter="true" 
-                                                 value="#{documentoIdentidadController.documentoEntitie.lugarNacimientoEntitie.idMunicipio}">
+                                                 value="#{documentoIdentidadController.muniNacEntitie.idMunicipio}">
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}"/>
-                                    <f:selectItems value="#{documentoIdentidadController.listMuniEntitie}" var="m"
+                                    <f:selectItems value="#{documentoIdentidadController.listMuniNacEntitie}" var="m"
                                                    itemLabel="#{m.nombreMunicipio}" itemValue="#{m.idMunicipio}"/>
                                 </p:selectOneMenu>
 
@@ -111,49 +122,62 @@
 
                                 <p:outputLabel for="lblProfesion">Profesión/Oficio: </p:outputLabel>
                                 <p:selectOneMenu id="lblProfesion" effect="fade" autoWidth="false" filter="true"
-                                                 value="#{documentoIdentidadController.documentoEntitie.profesionEntitie.idProfesiones}">
+                                                 value="#{documentoIdentidadController.profesionEntitie.idProfesiones}">
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
                                     <f:selectItems value="#{documentoIdentidadController.listProfesionEntitie}" var="prof"
                                                    itemLabel="#{prof.nombreProfesion}" itemValue="#{prof.idProfesiones}"/>
                                 </p:selectOneMenu>
 
+                                <p:outputLabel for="lblDeptoExpNacimiento" >Departamento Expedición: </p:outputLabel>
+                                <p:selectOneMenu id="lblDeptoExpNacimiento" effect="fade"  filter="true" 
+                                                 value="#{documentoIdentidadController.depoExpEntitie.idDepartamento}">
+                                    <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{documentoIdentidadController.listDepoExpEntitie}" var="deptoNac"
+                                                   itemLabel="#{deptoNac.nombreDepartamento}" itemValue="#{deptoNac.idDepartamento}"/>
 
-                                <p:outputLabel for="rbdGenero">Cargar Foto: </p:outputLabel>
-                                <p:fileUpload value="#{documentoIdentidadController.uploadFile}" mode="simple" skinSimple="true" 
-
-                                              sizeLimit="102400" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
-                                              invalidSizeMessage="El tamaño máximo de archivo permitido es 100 KB"
-                                              invalidFileMessage="solo gif | jpg | jpeg | png está permitido"
-                                              style="width: 50%"/>
+                                    <p:ajax event="change" listener="#{documentoIdentidadController.getListMuniExpDepto}"
+                                            update="lblMuniExp"/>
+                                </p:selectOneMenu>
 
                                 <p:outputLabel for="lblMuniExp" >Municipio Expedición: </p:outputLabel>
                                 <p:selectOneMenu id="lblMuniExp" effect="fade"  filter="true" 
-                                                 value="#{documentoIdentidadController.documentoEntitie.lugarExpedicionEntities.idMunicipio}">
+                                                 value="#{documentoIdentidadController.muniExpEntitie.idMunicipio}">
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
-                                    <f:selectItems value="#{documentoIdentidadController.listMuniEntitie}" var="muniExp"
+                                    <f:selectItems value="#{documentoIdentidadController.listMuniExpEntitie}" var="muniExp"
                                                    itemLabel="#{muniExp.nombreMunicipio}" itemValue="#{muniExp.idMunicipio}"/>
-
                                 </p:selectOneMenu>
 
                             </p:panelGrid>
+                            <p:panelGrid columns="2" style="width: 100%; border: 0px #fff !important; text-align: right;">
+                                <p:outputLabel for="rbdGenero">Cargar Foto: </p:outputLabel>
+                                <p:panelGrid columns="2" style="width: 100%; border: 0px #fff !important">
+                                    <p:fileUpload listener="#{documentoIdentidadController.handleFileUpload}" mode="advanced" 
+                                                  auto="true"  allowTypes="/(\.|\/)(gif|jpe?g|png)$/" update="nombreImagen"
+                                                  invalidFileMessage="solo gif | jpg | jpeg | png está permitido" />
+                                    <p:outputLabel id="nombreImagen" value="#{documentoIdentidadController.nombreImagen}" />
+                                </p:panelGrid>
+                            </p:panelGrid>
+
                         </p:tab>
                         <p:tab title="Datos secundarios">
                             <p:panelGrid columns="4" style="width: 100%; border: 0px #fff !important">
 
                                 <p:outputLabel for="lblDeptoResidencia">Departamento Residencia: </p:outputLabel>
-                                <p:selectOneMenu id="lblDeptoResidencia" effect="fade"  value="#{documentoIdentidadController.busquedaDepto}">
+                                <p:selectOneMenu id="lblDeptoResidencia"  effect="fade"  filter="true"  
+                                                 value="#{documentoIdentidadController.depoResEntitie.idDepartamento}">
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true" />
-                                    <f:selectItems value="#{documentoIdentidadController.listDeptoEntitie}" var="deptoRes"
+                                    <f:selectItems value="#{documentoIdentidadController.listDepoResEntitie}" var="deptoRes"
                                                    itemLabel="#{deptoRes.nombreDepartamento}" itemValue="#{deptoRes.idDepartamento}"/>
 
-                                    <p:ajax event="change" listener="#{documentoIdentidadController.listMuniEntitieXdepto}"
-                                            process="@this" update="@this lblMuniNacimiento"/>
+                                    <p:ajax event="change" listener="#{documentoIdentidadController.getListMuniResDepto}"
+                                            update="lblMuniResidencia"/>
                                 </p:selectOneMenu>
 
                                 <p:outputLabel for="lblMuniResidencia">Municipio Residencia: </p:outputLabel>
-                                <p:selectOneMenu id="lblMuniResidencia" effect="fade" value="#{documentoIdentidadController.documentoEntitie.residenciaEntitie.idMunicipio}">
+                                <p:selectOneMenu id="lblMuniResidencia" effect="fade"  filter="true"  
+                                                 value="#{documentoIdentidadController.muniResEntitie.idMunicipio}">
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true"/>
-                                    <f:selectItems value="#{documentoIdentidadController.listMuniEntitie}" var="muniRes"
+                                    <f:selectItems value="#{documentoIdentidadController.listMuniResEntitie}" var="muniRes"
                                                    itemLabel="#{muniRes.nombreMunicipio}" itemValue="#{muniRes.idMunicipio}"/>
                                 </p:selectOneMenu>
 
@@ -173,7 +197,8 @@
 
 
                                 <p:outputLabel for="lblEstadoFamiliar">Estado Familiar: </p:outputLabel>
-                                <p:selectOneMenu id="lblEstadoFamiliar" effect="fade" value="#{documentoIdentidadController.documentoEntitie.estadoFamiliarEntitie.idEstadoFamiliar}" >
+                                <p:selectOneMenu id="lblEstadoFamiliar" effect="fade"  filter="true"  
+                                                 value="#{documentoIdentidadController.estadoFamEntite.idEstadoFamiliar}" >
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{documentoIdentidadController.listEstadoFamEntite}" var="fam"
                                                    itemLabel="#{fam.nombreEstadoFamiliar}" itemValue="#{fam.idEstadoFamiliar}"/>
@@ -184,7 +209,7 @@
 
 
                                 <p:outputLabel for="lblTipoSangre">Tipo Sangre: </p:outputLabel>
-                                <p:selectOneMenu id="lblTipoSangre" effect="fade" value="#{documentoIdentidadController.documentoEntitie.tipoSangreEntitie.idTipoSangre}">
+                                <p:selectOneMenu id="lblTipoSangre" effect="fade"  filter="true" value="#{documentoIdentidadController.tipoSagreEntitie.idTipoSangre}">
                                     <f:selectItem itemLabel="Seleccione una opcion" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{documentoIdentidadController.listTipoSagreEntitie}" var="ts"
                                                    itemLabel="#{ts.tipoSangre}" itemValue="#{ts.idTipoSangre}"/>
@@ -199,10 +224,13 @@
                     <p:panelGrid columns="2"  style="width: 100%; border: 0px #fff !important">
                         <p:commandButton id="guardarDocumento" value="Guardar" ajax="true" update="documentoForm"  
                                          disabled="#{documentoIdentidadController.edicionUsuario}"
+                                         onstart="PF('block').show();" oncomplete="PF('block').hide();"
                                          actionListener="#{documentoIdentidadController.guardarDocumento}" />
 
                         <p:commandButton id="actualizarDocumento" value="Actualizar" disabled="#{!documentoIdentidadController.edicionUsuario}" 
-                                         ajax="true" update="documentoForm" actionListener="#{documentoIdentidadController.actualizarDocumento()}"/>
+                                         ajax="true" update="documentoForm"
+                                         onstart="PF('block').show();" oncomplete="PF('block').hide();"
+                                         actionListener="#{documentoIdentidadController.actualizarDocumento()}"/>
                     </p:panelGrid>
 
                 </p:panel>
@@ -220,8 +248,12 @@
                         <p:outputLabel for="txtClaveUsuario" styleClass="p-d-block" >Ingrese clave</p:outputLabel>
                         <p:password  id="txtClaveUsuario" value="#{documentoIdentidadController.claveSession}" redisplay="true"/>
 
-                        <p:commandButton value="Cerrar" oncomplete="PF('dialogValidaSesion').hide();"/>
-                        <p:commandButton value="Ingresar" ajax="true" action="#{documentoIdentidadController.validaSesion()}" update="mensaje grow1" />
+                        <p:commandButton value="Cerrar" oncomplete="PF('dialogValidaSesion').hide(); PF('block').hide();"
+                                         onstart="PF('block').show();" />
+                        <p:commandButton value="Ingresar" ajax="true"
+                                         onstart="PF('block').show();" oncomplete="PF('block').hide();"
+                                         action="#{documentoIdentidadController.validaSesion()}" 
+                                         update="mensaje grow1" />
                     </p:panelGrid>
                 </p:dialog>
 
@@ -243,14 +275,16 @@
                         <p:inputText id="txtTipoBusqueda" type="text"  value="#{documentoIdentidadController.textoBusqueda}" 
                                      disabled="#{documentoIdentidadController.inabilitarCampoTexto}" 
                                      readonly="#{documentoIdentidadController.inabilitarCampoTexto}"/>
-                        <p:commandButton value="Buscar" actionListener="#{documentoIdentidadController.buscarDocumento}" ajax="true" update="tablaDocumentos" />
+                        <p:commandButton value="Buscar" actionListener="#{documentoIdentidadController.buscarDocumento}"
+                                         onstart="PF('block').show();" oncomplete="PF('block').hide();"
+                                         ajax="true" update="tablaDocumentos" />
                     </p:panelGrid>
                     <p:panelGrid columns="1" styleClass="ui-panelgrid ui-responsive" >
                         <p:dataTable id="tablaDocumentos" var="ldoc" value="#{documentoIdentidadController.listDocumentoEntitie}" rows="10"
                                      paginator="true" emptyMessage="No se encontraron resultados..."
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                                     rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+                                     rowsPerPageTemplate="5,10">
 
                             <p:column headerText="Documento">
                                 <h:outputText value="#{ldoc.idDocumento}" />
@@ -283,11 +317,23 @@
                                                  ajax="true"
                                                  actionListener="#{documentoIdentidadController.seleccionarDocumento(ldoc)}"/>
                             </p:column>
+                            <p:column >
+                                <p:commandButton value="Ver reporte" ajax="false" 
+                                                 action="#{documentoIdentidadController.visualizarPDF(ldoc.idDocumento)}"/>
+                            </p:column>
 
+                            <p:column >
+                                <p:commandLink value="" ajax="true" target="popup" type="submit"
+                                               oncomplete="window.open('/DocumentoIdentidad/web/visualizarDoc.xhtml', this.target, width=900, height=600, top=100, left=100, scrollbars=YES, location=0)"
+                                               actionListener="#{documentoIdentidadController.cargarArchivo(ldoc.urlFoto)}">
+                                    <p:commandButton value="Ver" type="submit"/>
+                                </p:commandLink>                               
+                            </p:column>
                         </p:dataTable>
                         <br/>
                         <br/>
-                        <p:commandButton value="Cerrar" oncomplete="PF('dialogBusquedaDocumento').hide();"/>
+                        <p:commandButton value="Cerrar" onstart="PF('block').show();" 
+                                         oncomplete="PF('dialogBusquedaDocumento').hide(); PF('block').hide();"/>
                     </p:panelGrid>
                 </p:dialog>
             </h:form>
